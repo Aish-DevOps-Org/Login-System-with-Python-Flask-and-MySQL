@@ -44,7 +44,7 @@ jobs:
       id: docker-push
       uses: docker/build-push-action@v5
       with:
-        file: ./Login-System-with-Python-Flask-and-MySQL-master/Dockerfile
+        context: .
        # Pushes to docker hub
         push: true
         tags: |
