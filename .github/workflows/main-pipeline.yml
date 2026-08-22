@@ -28,6 +28,7 @@ jobs:
         ${{ vars.DOCKER_USER }}/flask_app:sha-${{ needs.prepare.outputs.short_sha }}
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+
   job3:
     needs: job2
     runs-on: ubuntu-latest
@@ -37,4 +38,6 @@ jobs:
     - name: print image url
       run: echo "Deploying image - ${{ needs.job2.outputs.image_url }} to production"
       
+      
+
 
