@@ -11,7 +11,7 @@ jobs:
       run_tests: true
 
   prepare:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     outputs:
       short_sha: ${{ steps.sha.outputs.short_sha }}
     steps:
