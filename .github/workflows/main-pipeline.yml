@@ -24,8 +24,8 @@ jobs:
     with:
       image_name: flask_app
       tags: |
-        ${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:latest
-        ${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:sha-${{ needs.prepare.outputs.short_sha }}
+        ${{ vars.DOCKER_USER }}/flask_app:latest
+        ${{ vars.DOCKER_USER }}/flask_app:sha-${{ needs.prepare.outputs.short_sha }}
     secrets:
       DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
   job3:
