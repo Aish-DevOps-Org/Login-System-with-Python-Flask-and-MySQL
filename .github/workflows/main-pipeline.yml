@@ -33,7 +33,6 @@ jobs:
     runs-on: ubuntu-latest
     # Reference the repo settings environment here
     environment: production
-    
     steps:
     - name: print image url
       run: echo "Deploying image - ${{ needs.job2.outputs.image_url }} to production"

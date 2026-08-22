@@ -54,5 +54,5 @@ jobs:
     - name: Set image URL output
       id: set-output
       run: |
-        echo "image_url=${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:latest >> $GITHUB_OUTPUT
+        echo "image_url=${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:latest" >> $GITHUB_OUTPUT
           
