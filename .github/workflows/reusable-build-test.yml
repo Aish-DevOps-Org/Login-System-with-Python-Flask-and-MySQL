@@ -1,0 +1,56 @@
+name: build-test
+on:
+  workflow_call:
+    inputs:
+      python_version:
+        required: true
+        type: string
+      run_tests:
+        type: boolean
+        default: true
+    outputs:
+      test_result:
+        value: ${{ jobs.testing.outputs.test_result }}
+
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    outputs:
+      test_result: ${{ steps.set-result.outputs.test_result }}
+    steps:
+    # 1. Checkout the code
+    - name: checkout code
+      uses: actions/checkout@v4
+    # 2. Setup python runtime version
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python_version }}
+    # 3. Install application dependecies
+    - name: Install app dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ./requirements.txt
+    # 4. Run tests only in run_tests is true
+    - name: Run Unittest discovery
+      id: exec-tests
+      if: inputs.run_tests 
+      # Executes unittest discovery and captures the exit code
+      run: |
+        if python -m unittest discover; then
+          echo "status=passed" >> $GITHUB_OUTPUT
+        else
+          echo "status=failed" >> $GITHUB_OUTPUT
+        fi
+    # 5. Get final test_result as output
+    - name: Set final output
+      id: set-result
+      if: always()
+      run: |
+        RESULT=${{ steps.exec-tests.output.status }}
+        if [ -z "$RESULT" ]; then
+          RESULT="skipped"
+        fi
+
+        echo "test_result=$RESULT" >> $GITHUB_OUTPUT

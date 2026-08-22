@@ -1,0 +1,41 @@
+name: main-pipeline
+on:
+  push:
+    branches: [main]
+
+jobs: 
+  job1:
+    uses: ./.github/workflows/reusable-build-test.yml
+    with:
+      python_version: '3.12'
+      run_tests: true
+
+  prepare:
+    runs-on: ubuntu-lates
+    outputs:
+      short_sha: ${{ steps.sha.outputs.short_sha }}
+    steps:
+      - id: sha
+        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+  job2:
+    needs: [job1, prepare]
+    uses: ./.github/workflows/reusable-docker.yml
+    with:
+      image_name: flask_app
+      tags: |
+        ${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:latest
+        ${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:sha-${{ needs.prepare.outputs.short_sha }}
+    secrets:
+      DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    # Reference the repo settings environment here
+    environment: production
+    
+    steps:
+    - name: print image url
+      run: echo "Deploying image - ${{ needs.job2.outputs.image_url }} to production"
+      
+
