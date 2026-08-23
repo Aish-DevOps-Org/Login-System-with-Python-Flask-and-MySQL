@@ -1,0 +1,51 @@
+name: health-check
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 */12 * * *'
+
+jobs:
+  health-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Run health check
+        run: |
+          IMAGE="${{ vars.DOCKER_USER }}/flask_app:latest"
+
+          docker pull "$IMAGE"
+
+          docker run -d --name flask_app -p 5000:5000 "$IMAGE"
+
+          sleep 5s
+
+          if curl -f http://localhost:5000; then
+            echo "Health check PASSED"
+            echo "STATUS=PASSED" >> $GITHUB_ENV
+          else
+            echo "Health check FAILED"
+            echo "STATUS=FAILED" >> $GITHUB_ENV
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop flask_app || true
+          docker rm flask_app || true
+
+      - name: Create Summary
+        if: always()
+        run: |
+          echo "## Health Check Report" >> $GITHUB_STEP_SUMMARY
+          echo "- Image: ${{ vars.DOCKER_USER }}/flask_app:latest" >> $GITHUB_STEP_SUMMARY
+          echo "- Status: $STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "- Time: $(date)" >> $GITHUB_STEP_SUMMARY
