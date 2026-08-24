@@ -77,7 +77,7 @@ jobs:
         path: trivy-report.json
         retention-days: 30
     
-    # 8. Push docker image if trivy scan is successful
+    # 8. Push docker image only if trivy scan is successful
     - name: Docker push image
       if: success()
       run: docker push ${{ steps.set-output.outputs.image_url }}
