@@ -61,8 +61,16 @@ jobs:
       uses: aquasecurity/trivy-action@v0.36.0
       with:
         image-ref: ${{ steps.set-output.outputs.image_url }}
-        format: 'table'
-        exit-code: '1'
+        format: 'json'
+        exit-code: '1'                # fails for mentioned severity
         ignore-unfixed: true
-        vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        severity: 'CRITICAL,HIGH'     # evaluates critical and high vulnarability
+        output: 'trivy-report.json'
+    
+    # 7. upload the trivy scan report
+    - name: upload the trivy report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-scan-report
+        path: trivy-report.json
+        retention-days: 30
