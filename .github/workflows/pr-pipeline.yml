@@ -5,6 +5,9 @@ on:
     types: 
     - opened
     - synchronize
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   build-test:
@@ -12,6 +15,7 @@ jobs:
     with:
       python_version: '3.12'
       run_tests: true
+      dependency_scan: true
 
   pr-comment:
     needs: build-test

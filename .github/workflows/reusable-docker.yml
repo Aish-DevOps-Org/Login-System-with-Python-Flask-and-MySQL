@@ -39,14 +39,15 @@ jobs:
         username: ${{ inputs.DOCKER_USER }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
-    # 4. Build and push docker image
+    # 4. Build docker image
     - name: build docker image
-      id: docker-push
+      #id: docker-push
       uses: docker/build-push-action@v5
       with:
         context: .
        # Pushes to docker hub
-        push: true
+        #push: true
+        load: true
         tags: |
           ${{ inputs.tags }}
     
@@ -75,3 +76,8 @@ jobs:
         name: trivy-scan-report
         path: trivy-report.json
         retention-days: 30
+    
+    # 8. Push docker image if trivy scan is successful
+    - name: Docker push image
+      if: success()
+      run: docker push ${{ steps.set-output.outputs.image_url }}

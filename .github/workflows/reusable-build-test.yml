@@ -8,6 +8,9 @@ on:
       run_tests:
         type: boolean
         default: true
+      dependency_scan:
+        type: boolean
+        default: true
     outputs:
       test_result:
         value: ${{ jobs.testing.outputs.test_result }}
@@ -32,7 +35,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r ./requirements.txt
-    # 4. Run tests only in run_tests is true
+
+    # 4. Run dependency scan
+    - name: Check Dependencies for Vulnerabilities
+      if: inputs.dependency_scan
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: critical
+    # 5. Run tests only in run_tests is true
     - name: Run Unittest discovery
       id: exec-tests
       if: inputs.run_tests 
@@ -43,7 +53,7 @@ jobs:
         else
           echo "status=failed" >> $GITHUB_OUTPUT
         fi
-    # 5. Get final test_result as output
+    # 6. Get final test_result as output
     - name: Set final output
       id: set-result
       if: always()

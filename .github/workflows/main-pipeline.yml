@@ -2,6 +2,8 @@ name: main-pipeline
 on:
   push:
     branches: [master]
+permissions:
+  contents: read
 
 jobs: 
   job1:
@@ -9,6 +11,7 @@ jobs:
     with:
       python_version: '3.12'
       run_tests: true
+      dependency_scan: false
 
   prepare:
     runs-on: ubuntu-latest
