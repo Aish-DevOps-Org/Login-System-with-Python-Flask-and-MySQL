@@ -21,12 +21,17 @@ jobs:
         run: |
           IMAGE="${{ vars.DOCKER_USER }}/flask_app:latest"
 
+          echo "pulling docker image"
           docker pull "$IMAGE"
 
+          echo "Running docker container"
           docker run -d --name flask_app -p 5000:5000 "$IMAGE"
+          docker ps flask_app
 
+          echo "wait 5s"
           sleep 5s
 
+          echo "check the health"
           if curl -f http://localhost:5000; then
             echo "Health check PASSED"
             echo "STATUS=PASSED" >> $GITHUB_ENV

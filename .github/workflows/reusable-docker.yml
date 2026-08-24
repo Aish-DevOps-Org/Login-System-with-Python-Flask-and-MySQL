@@ -55,4 +55,14 @@ jobs:
       id: set-output
       run: |
         echo "image_url=${{ vars.DOCKER_USER }}/${{ inputs.image_name }}:latest" >> $GITHUB_OUTPUT
-          
+    
+    # 6. Scan image vulnarability
+    - name: Trivy scan
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: ${{ steps.set-output.outputs.image_url }}
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'

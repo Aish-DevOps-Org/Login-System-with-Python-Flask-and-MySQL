@@ -132,3 +132,7 @@ gunicorn -b 0.0.0.0:5000 main:app
 
 **Note:**
 Find my docker image here - [Flaskapp-v2 image built with this project](https://hub.docker.com/repository/docker/codeedevops/myimages/tags)
+
+### Github actions workflow
+
+![Github flow](Completeflow.png)
