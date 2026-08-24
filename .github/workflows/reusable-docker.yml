@@ -26,7 +26,7 @@ jobs:
     steps:
     # 1. Fetch your code from the repository
     - name: checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 
     
     # 2. Create and boot the BuildKit builder instance
     - name: Set up Docker Buildx
